@@ -52,6 +52,8 @@ public class MediaUtils
                 : (!forceLocal ? Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                               : reactContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES));
 
+        if (path == null) return null;
+
         File result = new File(path, filename);
 
         try

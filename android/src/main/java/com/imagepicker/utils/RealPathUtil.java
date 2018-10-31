@@ -196,6 +196,7 @@ public class RealPathUtil {
 	                                                   @NonNull final Uri uri)
 	{
 		final File appDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+		if (appDir == null) return null;
 		final File file = new File(appDir, uri.getLastPathSegment());
 		return file.exists() ? file.toString(): null;
 	}
