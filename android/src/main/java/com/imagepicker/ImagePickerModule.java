@@ -544,15 +544,26 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
   {
     final int writePermission = ActivityCompat
             .checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    final int cameraPermission = ActivityCompat
-            .checkSelfPermission(activity, Manifest.permission.CAMERA);
 
-    final boolean permissionsGrated = writePermission == PackageManager.PERMISSION_GRANTED &&
-            cameraPermission == PackageManager.PERMISSION_GRANTED;
+    boolean permissionsGrated = writePermission == PackageManager.PERMISSION_GRANTED;
+
+    if (requestCode == REQUEST_PERMISSIONS_FOR_CAMERA)
+    {
+      final int cameraPermission = ActivityCompat
+              .checkSelfPermission(activity, Manifest.permission.CAMERA);
+
+      permissionsGrated = permissionsGrated &&
+              cameraPermission == PackageManager.PERMISSION_GRANTED;
+    }
 
     if (!permissionsGrated)
     {
-      final Boolean dontAskAgain = ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) && ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA);
+      Boolean dontAskAgain = ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+      if (requestCode == REQUEST_PERMISSIONS_FOR_CAMERA)
+      {
+          dontAskAgain = dontAskAgain && ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA);
+      }
 
       if (dontAskAgain)
       {
@@ -598,7 +609,16 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
       }
       else
       {
-        String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        String[] PERMISSIONS;
+        if (requestCode == REQUEST_PERMISSIONS_FOR_CAMERA)
+        {
+          PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        }
+        else
+        {
+          PERMISSIONS = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        }
+
         if (activity instanceof ReactActivity)
         {
           ((ReactActivity) activity).requestPermissions(PERMISSIONS, requestCode, listener);
