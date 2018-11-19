@@ -256,6 +256,10 @@ public class ImagePickerModule extends ReactContextBaseJavaModule
       cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
       final File original = createNewFile(reactContext, this.options, false);
+      if (original == null) {
+        responseHelper.invokeError(callback, "Couldn't create new file for camera photo");
+        return;
+      }
       imageConfig = imageConfig.withOriginalFile(original);
 
       if (imageConfig.original != null) {
