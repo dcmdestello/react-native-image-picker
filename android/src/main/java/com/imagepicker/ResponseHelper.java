@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.WritableMap;
+import java.util.ArrayList;
 
 /**
  * Created by rusfearuth on 24.02.17.
@@ -12,6 +13,7 @@ import com.facebook.react.bridge.WritableMap;
 
 public class ResponseHelper
 {
+    private ArrayList<Callback> called = new ArrayList<Callback>(3);
     private WritableMap response = Arguments.createMap();
 
     public void cleanResponse()
@@ -73,6 +75,12 @@ public class ResponseHelper
 
     public void invokeResponse(@NonNull final Callback callback)
     {
+        // TODO: find root issue that causes a bug here
+        // callback.invoke cannot be called more than once
+        if (called.contains(callback)) return;
+        if (called.size() >= 3) called.remove(0);
+        called.add(callback);
+
         callback.invoke(response);
     }
 }
